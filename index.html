@@ -19,8 +19,9 @@
             height: 30px;
             background-color: black;
             position: absolute;
-            top: calc(100vh * Math.random());
-            left: calc(100vw * Math.random());
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for size */
         }
     </style>
 </head>
@@ -28,16 +29,22 @@
     <div class="square"></div>
     <script>
         const square = document.querySelector('.square');
-        let positionX = parseInt(square.style.left) || 0;
-        let positionY = parseInt(square.style.top) || 0;
+        let positionX = 0; // Start position on X-axis
+        let positionY = 0; // Start position on Y-axis
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'd') {
-                positionX += 10;
+                positionX += 10; // Move right
             } else if (event.key === 'a') {
-                positionX -= 10;
+                positionX -= 10; // Move left
             } else if (event.key === 'w') {
-                positionY -= 10;
+                positionY -= 10; // Move up
             } else if (event.key === 's') {
-                positionY += 10;
-       
+                positionY += 10; // Move down
+            }
+            square.style.left = positionX + 'px'; // Update left position
+            square.style.top = positionY + 'px'; // Update top position
+        });
+    </script>
+</body>
+</html>
