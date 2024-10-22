@@ -3,48 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>rng rpg</title>
     <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            background-color: white;
-        }
-        .square {
-            width: 30px;
-            height: 30px;
+        #player {
+            width: 20px;
+            height:20px;
             background-color: black;
             position: absolute;
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%); /* Adjust for size */
+            left: 0;
+            top: 50px;
+        }
+
+        #redSquare {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            position: absolute;
+            left: 300px;
+            top: 200px;
         }
     </style>
 </head>
 <body>
-    <div class="square"></div>
-    <script>
-        const square = document.querySelector('.square');
-        let positionX = 0; // Start position on X-axis
-        let positionY = 0; // Start position on Y-axis
 
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'd') {
-                positionX += 10; // Move right
-            } else if (event.key === 'a') {
-                positionX -= 10; // Move left
-            } else if (event.key === 'w') {
-                positionY -= 10; // Move up
-            } else if (event.key === 's') {
-                positionY += 10; // Move down
-            }
-            square.style.left = positionX + 'px'; // Update left position
-            square.style.top = positionY + 'px'; // Update top position
+    <div id="player"></div>
+    <div id="redSquare"></div>
+
+    <script>
+        let player = document.getElementById("player");
+        let redSquare = document.getElementById("redSquare");
+
+        let positionX = 0;
+        let positionY = 50;
+        let speed = 2;
+        const keysPressed = {};
+
+        // Initial player start positions
+        const startX = 0;
+        const startY = 50;
+
+        // Detect key presses
+        document.addEventListener('keydown', function(event) {
+            keysPressed[event.key.toLowerCase()] = true;
         });
+
+        document.addEventListener('keyup', function(event) {
+            keysPressed[event.key.toLowerCase()] = false;
+        });
+
+        // Check collision between player and red square
+        function isColliding(player, redSquare) {
+            const playerRect = player.getBoundingClientRect();
+            const redSquareRect = redSquare.getBoundingClientRect();
+
+            return !(
+                playerRect.top > redSquareRect.bottom ||
+                playerRect.bottom < redSquareRect.top ||
+                playerRect.left > redSquareRect.right ||
+                playerRect.right < redSquareRect.left
+            );
+        }
+
+        // Move the player square and check for collisions
+        function movePlayer() {
+            let moveX = 0;
+            let moveY = 0;
+
+            if (keysPressed['d']) {
+                moveX += speed; // Move right
+            }
+            if (keysPressed['a']) {
+                moveX -= speed; // Move left
+            }
+            if (keysPressed['w']) {
+                moveY -= speed; // Move up
+            }
+            if (keysPressed['s']) {
+                moveY += speed; // Move down
+            }
+
+            // Normalize diagonal movement
+            if (moveX !== 0 && moveY !== 0) {
+                const diagonalSpeed = Math.sqrt(moveX * moveX + moveY * moveY);
+                moveX = (moveX / diagonalSpeed) * speed;
+                moveY = (moveY / diagonalSpeed) * speed;
+            }
+
+            positionX += moveX;
+            positionY += moveY;
+
+            player.style.left = positionX + 'px';
+            player.style.top = positionY + 'px';
+
+            // Check collision with red square
+            if (isColliding(player, redSquare)) {
+                // Reset player position to the start
+                positionX = startX;
+                positionY = startY;
+                player.style.left = positionX + 'px';
+                player.style.top = positionY + 'px';
+            }
+
+            requestAnimationFrame(movePlayer); // Continuously update movement
+        }
+
+        movePlayer(); // Start the movement loop
     </script>
+
 </body>
 </html>
