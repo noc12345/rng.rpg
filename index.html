@@ -1,1 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: white;
+        }
+        .square {
+            width: 30px;
+            height: 30px;
+            background-color: black;
+            position: absolute;
+            top: calc(100vh * Math.random());
+            left: calc(100vw * Math.random());
+        }
+    </style>
+</head>
+<body>
+    <div class="square"></div>
+    <script>
+        const square = document.querySelector('.square');
+        let positionX = parseInt(square.style.left) || 0;
+        let positionY = parseInt(square.style.top) || 0;
 
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'd') {
+                positionX += 10;
+            } else if (event.key === 'a') {
+                positionX -= 10;
+            } else if (event.key === 'w') {
+                positionY -= 10;
+            } else if (event.key === 's') {
+                positionY += 10;
+       
