@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Game</title>
+    <title>RNG RPG</title>
     <style>
         body {
             display: flex;
@@ -43,6 +43,7 @@
             position: fixed;
             left: 10px;
             top: 10px;
+            transition: transform 0.3s ease;
         }
 
         #output-box {
@@ -66,9 +67,30 @@
             bottom: 20px;
             right: 20px;
         }
+
+        #inventory-panel {
+            position: fixed;
+            top: 0;
+            left: -300px; /* Hidden off-screen initially */
+            width: 250px;
+            height: 100%;
+            background-color: white;
+            border-right: 2px solid #ccc;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: left 0.3s ease;
+        }
+
+        #inventory-panel.open {
+            left: 0; /* Slide in when open */
+        }
     </style>
 </head>
 <body>
+    <div id="inventory-panel">
+        <h2>Inventory</h2>
+        <p>Your items will be listed here.</p>
+    </div>
     <div id="inventory-button" class="button">Inventory &lt;</div>
     <div id="money-display">$0</div>
     <div id="output-box">Game output will appear here.</div>
@@ -77,6 +99,8 @@
     <script>
         let money = 0;
         const items = ["gold coin", "silver coin", "diamond", "rusty key", "ancient map"]; // List of items
+        const inventoryButton = document.getElementById("inventory-button");
+        const inventoryPanel = document.getElementById("inventory-panel");
 
         function updateMoneyDisplay() {
             document.getElementById("money-display").innerText = `$${money}`;
@@ -87,7 +111,14 @@
             document.getElementById("output-box").innerText = `You found a ${randomItem}!`;
         }
 
-        // Event listener for the search button
+        function toggleInventory() {
+            inventoryPanel.classList.toggle("open");
+            inventoryButton.classList.toggle("open");
+            inventoryButton.innerText = inventoryPanel.classList.contains("open") ? "Close Inventory" : "Inventory <";
+        }
+
+        // Event listeners
+        inventoryButton.addEventListener("click", toggleInventory);
         document.getElementById("search-button").addEventListener("click", searchForItem);
 
         // Initial display update
