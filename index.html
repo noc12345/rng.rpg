@@ -37,6 +37,7 @@
             border-radius: 5px;
             cursor: pointer;
             text-align: center;
+            margin-right: 10px; /* Space between buttons */
         }
 
         #inventory-button {
@@ -78,7 +79,7 @@
             border-right: 2px solid #ccc;
             padding: 20px;
             box-sizing: border-box;
-            overflow-y: auto;
+            overflow: hidden; /* Hide overflow for panel */
             transition: left 0.3s ease;
         }
 
@@ -105,13 +106,25 @@
             background-color: #cce5ff; /* Highlight selected item */
         }
 
+        .inventory-item.common {
+            background-color: #e0f7fa; /* Light blue for common items */
+        }
+
+        .inventory-item.uncommon {
+            background-color: #ffeb3b; /* Yellow for uncommon items */
+        }
+
+        .inventory-item.rare {
+            background-color: #8bc34a; /* Green for rare items */
+        }
+
         .inventory-item:last-child {
             margin-bottom: 0;
         }
 
         #sell-button-container {
             position: absolute;
-            bottom: 0;
+            bottom: 10px;
             left: 0;
             width: 100%;
             padding: 10px;
@@ -121,7 +134,7 @@
             text-align: center;
         }
 
-        #sell-button {
+        #sell-button, #sell-all-button {
             font-size: 16px;
             padding: 10px;
             background-color: white;
@@ -129,6 +142,13 @@
             border: 2px solid #ccc;
             border-radius: 5px;
             cursor: pointer;
+            margin-right: 10px; /* Space between the buttons */
+        }
+
+        #inventory-items {
+            height: calc(100% - 80px); /* Subtract height of sell button container */
+            overflow-y: auto;
+            padding-bottom: 50px; /* Optional padding to give space for scroll */
         }
 
     </style>
@@ -141,6 +161,7 @@
         </div>
         <div id="sell-button-container">
             <button id="sell-button" class="button">Sell</button>
+            <button id="sell-all-button" class="button">Sell All</button>
         </div>
     </div>
     <div id="inventory-button" class="button">Inventory &lt;</div>
@@ -151,7 +172,13 @@
     <script>
         let money = 0;
         let selectedItem = null; // To store the selected item
-        const items = ["gold coin", "silver coin", "diamond", "rusty key", "ancient map"]; // List of items
+        const items = [
+            { name: "gold coin", price: 20, rarity: "common" },
+            { name: "silver coin", price: 10, rarity: "common" },
+            { name: "diamond", price: 100, rarity: "rare" },
+            { name: "rusty key", price: 5, rarity: "uncommon" },
+            { name: "ancient map", price: 50, rarity: "uncommon" }
+        ]; // List of items with their prices and rarities
         const inventoryButton = document.getElementById("inventory-button");
         const inventoryPanel = document.getElementById("inventory-panel");
         const inventoryItemsContainer = document.getElementById("inventory-items");
@@ -162,7 +189,7 @@
 
         function searchForItem() {
             const randomItem = items[Math.floor(Math.random() * items.length)];
-            document.getElementById("output-box").innerText = `You found a ${randomItem}!`;
+            document.getElementById("output-box").innerText = `You found a ${randomItem.name} (${randomItem.rarity} item)! (Worth $${randomItem.price})`;
 
             // Add the item to the inventory
             addItemToInventory(randomItem);
@@ -171,8 +198,8 @@
         function addItemToInventory(item) {
             // Create a new button for the inventory item
             const itemButton = document.createElement("button");
-            itemButton.classList.add("inventory-item");
-            itemButton.innerText = item;
+            itemButton.classList.add("inventory-item", item.rarity); // Add rarity class to style the item
+            itemButton.innerText = `${item.name} (Worth $${item.price})`;
 
             // Add event listener to select the item when clicked
             itemButton.addEventListener("click", function() {
@@ -192,20 +219,46 @@
             // Add the selected class to the clicked item
             button.classList.add("selected");
             selectedItem = button; // Set the clicked button as the selected item
-            document.getElementById("output-box").innerText = `Selected: ${item}`;
+            document.getElementById("output-box").innerText = `Selected: ${item.name} (Worth $${item.price}, Rarity: ${item.rarity})`;
         }
 
         function sellItem() {
             if (selectedItem) {
+                // Get the price of the selected item
+                const itemPrice = selectedItem.innerText.split(' (Worth $')[1].split(')')[0];
+
+                // Add the price of the selected item to money
+                money += parseInt(itemPrice);
+
                 // Remove the selected item from the inventory
                 inventoryItemsContainer.removeChild(selectedItem);
-                money += 10;  // Add 10 currency for each item sold
                 updateMoneyDisplay();
-                document.getElementById("output-box").innerText = `You sold the selected item! You now have $${money}.`;
+                document.getElementById("output-box").innerText = `You sold the selected item for $${itemPrice}! You now have $${money}.`;
+
                 selectedItem = null; // Reset selected item
             } else {
                 document.getElementById("output-box").innerText = `No item selected to sell.`;
             }
+        }
+
+        function sellAllItems() {
+            const allItems = document.querySelectorAll(".inventory-item");
+            let totalSale = 0;
+
+            // Calculate total sale price
+            allItems.forEach(item => {
+                const itemPrice = item.innerText.split(' (Worth $')[1].split(')')[0];
+                totalSale += parseInt(itemPrice);
+            });
+
+            // Add the total sale price to the money
+            money += totalSale;
+
+            // Remove all items from the inventory
+            inventoryItemsContainer.innerHTML = "";
+            updateMoneyDisplay();
+
+            document.getElementById("output-box").innerText = `You sold all items for $${totalSale}! You now have $${money}.`;
         }
 
         function toggleInventory() {
@@ -217,6 +270,7 @@
         inventoryButton.addEventListener("click", toggleInventory);
         document.getElementById("search-button").addEventListener("click", searchForItem);
         document.getElementById("sell-button").addEventListener("click", sellItem);
+        document.getElementById("sell-all-button").addEventListener("click", sellAllItems);
 
         // Initial display update
         updateMoneyDisplay();
