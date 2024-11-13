@@ -98,6 +98,11 @@
             margin-bottom: 10px;
             text-align: center;
             font-size: 14px;
+            cursor: pointer;
+        }
+
+        .inventory-item.selected {
+            background-color: #cce5ff; /* Highlight selected item */
         }
 
         .inventory-item:last-child {
@@ -145,6 +150,7 @@
 
     <script>
         let money = 0;
+        let selectedItem = null; // To store the selected item
         const items = ["gold coin", "silver coin", "diamond", "rusty key", "ancient map"]; // List of items
         const inventoryButton = document.getElementById("inventory-button");
         const inventoryPanel = document.getElementById("inventory-panel");
@@ -163,13 +169,43 @@
         }
 
         function addItemToInventory(item) {
-            // Create a new item box
-            const itemBox = document.createElement("div");
-            itemBox.classList.add("inventory-item");
-            itemBox.innerText = item;
+            // Create a new button for the inventory item
+            const itemButton = document.createElement("button");
+            itemButton.classList.add("inventory-item");
+            itemButton.innerText = item;
 
-            // Append the item to the inventory panel
-            inventoryItemsContainer.appendChild(itemBox);
+            // Add event listener to select the item when clicked
+            itemButton.addEventListener("click", function() {
+                selectItem(itemButton, item);
+            });
+
+            // Append the item button to the inventory panel
+            inventoryItemsContainer.appendChild(itemButton);
+        }
+
+        function selectItem(button, item) {
+            // Remove the selected class from any previously selected item
+            if (selectedItem) {
+                selectedItem.classList.remove("selected");
+            }
+
+            // Add the selected class to the clicked item
+            button.classList.add("selected");
+            selectedItem = button; // Set the clicked button as the selected item
+            document.getElementById("output-box").innerText = `Selected: ${item}`;
+        }
+
+        function sellItem() {
+            if (selectedItem) {
+                // Remove the selected item from the inventory
+                inventoryItemsContainer.removeChild(selectedItem);
+                money += 10;  // Add 10 currency for each item sold
+                updateMoneyDisplay();
+                document.getElementById("output-box").innerText = `You sold the selected item! You now have $${money}.`;
+                selectedItem = null; // Reset selected item
+            } else {
+                document.getElementById("output-box").innerText = `No item selected to sell.`;
+            }
         }
 
         function toggleInventory() {
@@ -177,23 +213,10 @@
             inventoryButton.classList.toggle("open");
         }
 
-        function sellItems() {
-            // For simplicity, we just remove the first item when clicking the sell button
-            const firstItem = inventoryItemsContainer.querySelector(".inventory-item");
-            if (firstItem) {
-                inventoryItemsContainer.removeChild(firstItem);
-                money += 10;  // Add 10 currency for each item sold
-                updateMoneyDisplay();
-                document.getElementById("output-box").innerText = `You sold an item! You now have $${money}.`;
-            } else {
-                document.getElementById("output-box").innerText = `No items to sell.`;
-            }
-        }
-
         // Event listeners
         inventoryButton.addEventListener("click", toggleInventory);
         document.getElementById("search-button").addEventListener("click", searchForItem);
-        document.getElementById("sell-button").addEventListener("click", sellItems);
+        document.getElementById("sell-button").addEventListener("click", sellItem);
 
         // Initial display update
         updateMoneyDisplay();
