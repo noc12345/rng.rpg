@@ -24,10 +24,8 @@
             top: 10px;
             font-size: 20px;
             font-weight: bold;
-            background: #222;
-            color: #fff;
+            color: #000;
             padding: 10px;
-            border-radius: 8px;
         }
 
         .button {
@@ -105,6 +103,29 @@
         .inventory-item:last-child {
             margin-bottom: 0;
         }
+
+        #sell-button-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 2px solid #ccc;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        #sell-button {
+            font-size: 16px;
+            padding: 10px;
+            background-color: white;
+            color: black;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -112,6 +133,9 @@
         <h2>Inventory</h2>
         <div id="inventory-items">
             <!-- Items will be added here -->
+        </div>
+        <div id="sell-button-container">
+            <button id="sell-button" class="button">Sell</button>
         </div>
     </div>
     <div id="inventory-button" class="button">Inventory &lt;</div>
@@ -153,9 +177,23 @@
             inventoryButton.classList.toggle("open");
         }
 
+        function sellItems() {
+            // For simplicity, we just remove the first item when clicking the sell button
+            const firstItem = inventoryItemsContainer.querySelector(".inventory-item");
+            if (firstItem) {
+                inventoryItemsContainer.removeChild(firstItem);
+                money += 10;  // Add 10 currency for each item sold
+                updateMoneyDisplay();
+                document.getElementById("output-box").innerText = `You sold an item! You now have $${money}.`;
+            } else {
+                document.getElementById("output-box").innerText = `No items to sell.`;
+            }
+        }
+
         // Event listeners
         inventoryButton.addEventListener("click", toggleInventory);
         document.getElementById("search-button").addEventListener("click", searchForItem);
+        document.getElementById("sell-button").addEventListener("click", sellItems);
 
         // Initial display update
         updateMoneyDisplay();
