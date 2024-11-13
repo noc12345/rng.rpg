@@ -124,7 +124,7 @@
 
         #sell-button-container {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
             left: 0;
             width: 100%;
             padding: 10px;
@@ -173,11 +173,13 @@
         let money = 0;
         let selectedItem = null; // To store the selected item
         const items = [
-            { name: "gold coin", price: 20, rarity: "common" },
-            { name: "silver coin", price: 10, rarity: "common" },
-            { name: "diamond", price: 100, rarity: "rare" },
-            { name: "rusty key", price: 5, rarity: "uncommon" },
-            { name: "ancient map", price: 50, rarity: "uncommon" }
+            { name: "stick", price: 0, rarity: "common" },
+            { name: "banana peel", price: 0, rarity: "common" },
+            { name: "wrapper", price: 0, rarity: "rare" },
+            { name: "paper", price: 0.1, rarity: "uncommon" },
+            { name: "piece of cardboard", price: 50, rarity: "uncommon" },
+            { name: "soda can", price: 0.1, rarity: "uncommon" },
+            { name: "dollar", price: 01, rarity: "uncommon" }
         ]; // List of items with their prices and rarities
         const inventoryButton = document.getElementById("inventory-button");
         const inventoryPanel = document.getElementById("inventory-panel");
@@ -188,12 +190,34 @@
         }
 
         function searchForItem() {
-            const randomItem = items[Math.floor(Math.random() * items.length)];
+            // Create an array that gives each item multiple entries based on its rarity
+            const weightedItems = [];
+            items.forEach(item => {
+                let weight = 0;
+        
+                // Assign weights based on rarity
+                if (item.rarity === 'common') {
+                    weight = 10; // Common items are the most likely to appear
+                } else if (item.rarity === 'uncommon') {
+                    weight = 5; // Uncommon items have a medium chance
+                } else if (item.rarity === 'rare') {
+                    weight = 2; // Rare items are less likely to appear
+                }
+        
+                // Add the item to the weighted list based on its weight
+                for (let i = 0; i < weight; i++) {
+                    weightedItems.push(item);
+                }
+            });
+        
+            // Randomly select an item from the weighted array
+            const randomItem = weightedItems[Math.floor(Math.random() * weightedItems.length)];
+        
+            // Display the result and add the item to the inventory
             document.getElementById("output-box").innerText = `You found a ${randomItem.name} (${randomItem.rarity} item)! (Worth $${randomItem.price})`;
-
-            // Add the item to the inventory
             addItemToInventory(randomItem);
         }
+
 
         function addItemToInventory(item) {
             // Create a new button for the inventory item
