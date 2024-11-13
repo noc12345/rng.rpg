@@ -24,8 +24,10 @@
             top: 10px;
             font-size: 20px;
             font-weight: bold;
-            color: #000;
+            background: #222;
+            color: #fff;
             padding: 10px;
+            border-radius: 8px;
         }
 
         .button {
@@ -40,10 +42,10 @@
         }
 
         #inventory-button {
-            position: fixed;
-            left: 10px;
+            position: absolute;
+            left: 0;
             top: 10px;
-            transition: transform 0.3s ease;
+            transition: left 0.3s ease;
         }
 
         #output-box {
@@ -71,25 +73,46 @@
         #inventory-panel {
             position: fixed;
             top: 0;
-            left: -300px; /* Hidden off-screen initially */
+            left: -250px; /* Hidden off-screen initially */
             width: 250px;
             height: 100%;
             background-color: white;
             border-right: 2px solid #ccc;
             padding: 20px;
             box-sizing: border-box;
+            overflow-y: auto;
             transition: left 0.3s ease;
         }
 
         #inventory-panel.open {
             left: 0; /* Slide in when open */
         }
+
+        #inventory-button.open {
+            left: 250px; /* Move button with panel when open */
+        }
+
+        .inventory-item {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .inventory-item:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
     <div id="inventory-panel">
         <h2>Inventory</h2>
-        <p>Your items will be listed here.</p>
+        <div id="inventory-items">
+            <!-- Items will be added here -->
+        </div>
     </div>
     <div id="inventory-button" class="button">Inventory &lt;</div>
     <div id="money-display">$0</div>
@@ -101,6 +124,7 @@
         const items = ["gold coin", "silver coin", "diamond", "rusty key", "ancient map"]; // List of items
         const inventoryButton = document.getElementById("inventory-button");
         const inventoryPanel = document.getElementById("inventory-panel");
+        const inventoryItemsContainer = document.getElementById("inventory-items");
 
         function updateMoneyDisplay() {
             document.getElementById("money-display").innerText = `$${money}`;
@@ -109,12 +133,24 @@
         function searchForItem() {
             const randomItem = items[Math.floor(Math.random() * items.length)];
             document.getElementById("output-box").innerText = `You found a ${randomItem}!`;
+
+            // Add the item to the inventory
+            addItemToInventory(randomItem);
+        }
+
+        function addItemToInventory(item) {
+            // Create a new item box
+            const itemBox = document.createElement("div");
+            itemBox.classList.add("inventory-item");
+            itemBox.innerText = item;
+
+            // Append the item to the inventory panel
+            inventoryItemsContainer.appendChild(itemBox);
         }
 
         function toggleInventory() {
             inventoryPanel.classList.toggle("open");
             inventoryButton.classList.toggle("open");
-            inventoryButton.innerText = inventoryPanel.classList.contains("open") ? "Close Inventory" : "Inventory <";
         }
 
         // Event listeners
