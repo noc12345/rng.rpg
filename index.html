@@ -3,112 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rng rpg</title>
+    <title>Money Game</title>
     <style>
-        #player {
-            width: 20px;
-            height:20px;
-            background-color: black;
-            position: absolute;
-            left: 0;
-            top: 50px;
+        body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 0;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            position: relative;
+            height: 100vh;
+            box-sizing: border-box;
         }
 
-        #redSquare {
-            width: 100px;
-            height: 100px;
-            background-color: red;
+        #money-display {
+            font-size: 20px;
+            font-weight: bold;
+            background: #222;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .button {
+            font-size: 16px;
+            padding: 10px;
+            background-color: white;
+            color: black;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #inventory-button {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+        }
+
+        #output-box {
             position: absolute;
-            left: 300px;
-            top: 200px;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 100px;
+            padding: 10px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #search-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
         }
     </style>
 </head>
 <body>
-
-    <div id="player"></div>
-    <div id="redSquare"></div>
+    <div id="inventory-button" class="button">Inventory &lt;</div>
+    <div id="money-display">$0</div>
+    <div id="output-box">Game output will appear here.</div>
+    <button id="search-button" class="button">Search</button>
 
     <script>
-        let player = document.getElementById("player");
-        let redSquare = document.getElementById("redSquare");
+        let money = 0;
+        const items = ["gold coin", "silver coin", "diamond", "rusty key", "ancient map"]; // List of items
 
-        let positionX = 0;
-        let positionY = 50;
-        let speed = 2;
-        const keysPressed = {};
-
-        // Initial player start positions
-        const startX = 0;
-        const startY = 50;
-
-        // Detect key presses
-        document.addEventListener('keydown', function(event) {
-            keysPressed[event.key.toLowerCase()] = true;
-        });
-
-        document.addEventListener('keyup', function(event) {
-            keysPressed[event.key.toLowerCase()] = false;
-        });
-
-        // Check collision between player and red square
-        function isColliding(player, redSquare) {
-            const playerRect = player.getBoundingClientRect();
-            const redSquareRect = redSquare.getBoundingClientRect();
-
-            return !(
-                playerRect.top > redSquareRect.bottom ||
-                playerRect.bottom < redSquareRect.top ||
-                playerRect.left > redSquareRect.right ||
-                playerRect.right < redSquareRect.left
-            );
+        function updateMoneyDisplay() {
+            document.getElementById("money-display").innerText = `$${money}`;
         }
 
-        // Move the player square and check for collisions
-        function movePlayer() {
-            let moveX = 0;
-            let moveY = 0;
-
-            if (keysPressed['d']) {
-                moveX += speed; // Move right
-            }
-            if (keysPressed['a']) {
-                moveX -= speed; // Move left
-            }
-            if (keysPressed['w']) {
-                moveY -= speed; // Move up
-            }
-            if (keysPressed['s']) {
-                moveY += speed; // Move down
-            }
-
-            // Normalize diagonal movement
-            if (moveX !== 0 && moveY !== 0) {
-                const diagonalSpeed = Math.sqrt(moveX * moveX + moveY * moveY);
-                moveX = (moveX / diagonalSpeed) * speed;
-                moveY = (moveY / diagonalSpeed) * speed;
-            }
-
-            positionX += moveX;
-            positionY += moveY;
-
-            player.style.left = positionX + 'px';
-            player.style.top = positionY + 'px';
-
-            // Check collision with red square
-            if (isColliding(player, redSquare)) {
-                // Reset player position to the start
-                positionX = startX;
-                positionY = startY;
-                player.style.left = positionX + 'px';
-                player.style.top = positionY + 'px';
-            }
-
-            requestAnimationFrame(movePlayer); // Continuously update movement
+        function searchForItem() {
+            const randomItem = items[Math.floor(Math.random() * items.length)];
+            document.getElementById("output-box").innerText = `You found a ${randomItem}!`;
         }
 
-        movePlayer(); // Start the movement loop
+        // Event listener for the search button
+        document.getElementById("search-button").addEventListener("click", searchForItem);
+
+        // Initial display update
+        updateMoneyDisplay();
     </script>
-
 </body>
 </html>
