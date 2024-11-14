@@ -176,10 +176,11 @@
             { name: "stick", price: 0, rarity: "common" },
             { name: "banana peel", price: 0, rarity: "common" },
             { name: "wrapper", price: 0, rarity: "rare" },
-            { name: "paper", price: 0.1, rarity: "uncommon" },
-            { name: "piece of cardboard", price: 50, rarity: "uncommon" },
-            { name: "soda can", price: 0.1, rarity: "uncommon" },
-            { name: "dollar", price: 01, rarity: "uncommon" }
+            { name: "paper", price: 1, rarity: "uncommon" },
+            { name: "piece of cardboard", price: 1, rarity: "uncommon" },
+            { name: "soda can", price: 1, rarity: "uncommon" },
+            { name: "dollar", price: 1, rarity: "uncommon" },
+            { name: "lottery ticket", price: 10, rarity: "rare" }
         ]; // List of items with their prices and rarities
         const inventoryButton = document.getElementById("inventory-button");
         const inventoryPanel = document.getElementById("inventory-panel");
@@ -201,7 +202,7 @@
                 } else if (item.rarity === 'uncommon') {
                     weight = 5; // Uncommon items have a medium chance
                 } else if (item.rarity === 'rare') {
-                    weight = 2; // Rare items are less likely to appear
+                    weight = 1; // Rare items are less likely to appear
                 }
         
                 // Add the item to the weighted list based on its weight
