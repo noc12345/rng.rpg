@@ -170,7 +170,7 @@
     <button id="search-button" class="button">Search</button>
 
     <script>
-        let money = 0;
+        let money = 0.0;
         let selectedItem = null; // To store the selected item
         const items = [
             { name: "stick", price: 0, rarity: "common" },
@@ -186,7 +186,7 @@
         const inventoryItemsContainer = document.getElementById("inventory-items");
 
         function updateMoneyDisplay() {
-            document.getElementById("money-display").innerText = `$${money}`;
+            document.getElementById("money-display").innerText = `$${money.toFixed(2)}`;
         }
 
         function searchForItem() {
