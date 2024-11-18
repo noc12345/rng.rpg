@@ -256,24 +256,28 @@
             document.getElementById("output-box").innerText = `Selected: ${item.name} (Worth $${item.price}, Rarity: ${item.rarity})`;
         }
 
+        // Add an event listener for the Backspace key
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Backspace") {
+                event.preventDefault(); // Prevent the default backspace behavior (like deleting text)
+                sellItem(); // Call the same function as the Sell button
+            }
+        });
+        
+        // Function for the Sell button
         function sellItem() {
-            if (selectedItem) {
-                // Get the price of the selected item
-                const itemPrice = selectedItem.innerText.split(' (Worth $')[1].split(')')[0];
-
-                // Add the price of the selected item to money
-                money += parseInt(itemPrice);
-
-                // Remove the selected item from the inventory
-                inventoryItemsContainer.removeChild(selectedItem);
-                updateMoneyDisplay();
-                document.getElementById("output-box").innerText = `You sold the selected item for $${itemPrice}! You now have $${money}.`;
-
-                selectedItem = null; // Reset selected item
+            const selectedItemIndex = inventory.findIndex(item => item.name === selectedItem);
+            if (selectedItemIndex !== -1) {
+                const soldItem = inventory.splice(selectedItemIndex, 1)[0];
+                money += soldItem.price; // Add item price to money
+                document.getElementById("money-display").innerText = `$${money}`;
+                updateInventoryDisplay();
+                document.getElementById("output-box").innerText = `You sold ${soldItem.name} for $${soldItem.price}!`;
             } else {
-                document.getElementById("output-box").innerText = `No item selected to sell.`;
+                document.getElementById("output-box").innerText = "No item selected to sell!";
             }
         }
+
 
         function sellAllItems() {
             const allItems = document.querySelectorAll(".inventory-item");
